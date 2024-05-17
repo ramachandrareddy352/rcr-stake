@@ -4,11 +4,11 @@ pragma solidity ^0.8.10;
 import {Owned} from "@solmate/src/auth/Owned.sol";
 import {ReentrancyGuard} from "@solmate/src/utils/ReentrancyGuard.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-
 import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 import {Multicall} from "@openzeppelin/contracts/utils/Multicall.sol";
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {IDSCEngine} from "../interfaces/IDSCEngine.sol";
 
 /**
  * For fixed stake mint NFT and the verification is done through that NFT only.
@@ -21,25 +21,23 @@ contract Pool is Owned, Pausable, ReentrancyGuard, Multicall {
 
     mapping(address collateral => address pricefeed) public s_collaterals;
     mapping(address user => mapping(address collateral => Collateral)) public s_UserData;
-    mapping(uint256 _days => uint256 apy) public s_fixedStakeRewardRate;
+    mapping(uint256 dayS => uint256 apy) public s_fixedStakeRewardRate;
     mapping(address collateral => uint256 rewardRate) public s_rewardRate;
 
     address private immutable i_dscEngine;
     address private immutable i_dscToken;
 
     constructor(address _owner) Owned(_owner) {
-        s_fixedStakeRewardRate[30] = 10;
-        s_fixedStakeRewardRate[60] = 20;
-        s_fixedStakeRewardRate[90] = 30;
-        s_fixedStakeRewardRate[120] = 40;
-        s_fixedStakeRewardRate[180] = 60;
+        s_fixedStakeRewardRate[30] = 100;
+        s_fixedStakeRewardRate[60] = 200;
+        s_fixedStakeRewardRate[90] = 300;
+        s_fixedStakeRewardRate[120] = 400;
     }
 
     struct Collateral {
         uint256 totalDeposited;
         uint256 totalRewarded;
         uint256 lastUpdated;
-        bool isDSC;  // if he accepts DSC tokens as reward tokens
     }
 
     modifier isAcceptableToken(address _collateralToken) {
@@ -51,7 +49,7 @@ contract Pool is Owned, Pausable, ReentrancyGuard, Multicall {
         require(_value != 0, "Pool : Invalid zero amount");
         _;
     }
-
+    
     // staking functions
     function fixedStake(address _for, address _collateralToken, uint256 _amount, uint256 _fixedDays) external isAcceptableToken(_collateralToken) isNonZero(_amount) whenNotPaused() nonReentrant() {
         require(s_fixedStakeRewardRate[_fixedDays] != 0, "Invalid no.of days to stake");
@@ -60,7 +58,10 @@ contract Pool is Owned, Pausable, ReentrancyGuard, Multicall {
     }
     
     function stake() external {}
-    
+
+    function fixedStakeWithPermit() external {}
+    function stakeWithPermit() external {}
+
     // redeem deposited collateral
     function redeemCollateral() external {}
     
@@ -78,7 +79,6 @@ contract Pool is Owned, Pausable, ReentrancyGuard, Multicall {
 
     // un-pay laon
     function unpayLoan() external {}   // will be rewarded
-
 
     // pause and unpause functions
     function pause() external onlyOwner() {
