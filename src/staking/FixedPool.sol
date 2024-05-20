@@ -87,12 +87,13 @@ contract FixedPool is Owned, Pausable, ReentrancyGuard, Multicall {
     }
 
     modifier isAcceptableToken(address _collateralToken) {
-        require(s_collaterals[_collateralToken], "Pool : Invalid collateral token");
+        _isAcceptableToken(_collateralToken);
         _;
     }
 
+
     modifier isNonZero(uint256 _value) {
-        require(_value != 0, "Pool : Invalid zero amount");
+        _isNonZero(_value);
         _;
     }
 
@@ -391,6 +392,14 @@ contract FixedPool is Owned, Pausable, ReentrancyGuard, Multicall {
         for (uint256 i = 0; i < _days.length; i++) {
             s_fixedStakeRewardRate[_collateralToken][_days[i]] = _rewardRate[i];
         }
+    }
+
+    function _isAcceptableToken(address _collateralToken) private view {
+        require(s_collaterals[_collateralToken], "Pool : Invalid collateral token");
+    }
+
+    function _isNonZero(uint256 _value) private pure {
+        require(_value != 0, "Pool : Invalid zero amount");
     }
 
     /* ------- pause and unpause functions ------- */
