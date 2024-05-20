@@ -2,17 +2,17 @@
 pragma solidity ^0.8.10;
 
 /*
-Protocol announce the airdrop for every interval of time.
-User register for every airdrop in that interval and first person got air drops.
-After completeing of airdrop, chainlink automatically call anounce winner function using VRF consumer
-Write a contract for VRF consumer to fund through it.
-Based on the no.of user and the amount then deposited the no.of dsc aslo minted, then only protocol does not loss more dcs tokens
-Pause the airdrop you want
-minimum 5 users to register a airdrop
-Interval time should be adjustable by only owner
-Register amount is changes based on the airdrop amount.
-Only take Eth for register airdrop.
-*/
+ * Protocol announce the airdrop for every interval of time.
+ * User register for every airdrop in that interval and first person got air drops.
+ * After completeing of airdrop, chainlink automatically call anounce winner function using VRF consumer
+ * Write a contract for VRF consumer to fund through it.
+ * Based on the no.of user and the amount then deposited the no.of dsc aslo minted, then only protocol does not loss more dcs tokens
+ * Pause the airdrop you want
+ * minimum 5 users to register a airdrop
+ * Interval time should be adjustable by only owner
+ * Register amount is changes based on the airdrop amount.
+ * Only take Eth for register airdrop.
+ */
 
 import {Owned} from "@solmate/src/auth/Owned.sol";
 import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
@@ -262,6 +262,3 @@ contract DSCAirdrop is Owned, Pausable, VRFConsumerBaseV2, KeeperCompatibleInter
         emit WithdrawEth(_to, _amount);
     }
 }
-
-// consumer address => 0x507a71b504b465c0fc7ca594260044960bca33dd
-// id => 5037
