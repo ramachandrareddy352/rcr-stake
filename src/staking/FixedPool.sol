@@ -235,14 +235,7 @@ contract FixedPool is Owned, Pausable, ReentrancyGuard, Multicall {
         );
     }
 
-    function _stake(
-        address _user,
-        address _for,
-        address _collateralToken,
-        uint256 _amount,
-        uint256 _fixedDays,
-        uint256 _rewardRate
-    ) private {
+    function _stake(address _user, address _for, address _collateralToken, uint256 _amount, uint256 _fixedDays, uint256 _rewardRate) private {
         require(_for != address(0), "Pool : Invalid zero address");
         require(_rewardRate != 0, "Pool : Invalid no.of days to stake");
 
@@ -263,17 +256,7 @@ contract FixedPool is Owned, Pausable, ReentrancyGuard, Multicall {
         s_totalFixedStakingAmount[_collateralToken] += _amount;
         s_userStakingIds[_for].push(stakingId);
 
-        emit Stake(
-            stakingId,
-            _user,
-            _for,
-            _collateralToken,
-            _amount,
-            block.timestamp,
-            block.timestamp + (_fixedDays * 1 days),
-            _rewardRate,
-            _fixedDays
-        );
+        emit Stake(stakingId, _user, _for, _collateralToken, _amount, block.timestamp, block.timestamp + (_fixedDays * 1 days), _rewardRate, _fixedDays);
     }
 
     /**
